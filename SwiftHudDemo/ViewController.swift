@@ -28,6 +28,10 @@ class ViewController: UIViewController {
         view.addSubview(tableView)
     }
     
+    /*
+     打包脚本:
+     fastlane pg version:1.0.0 build:30 changelog:"测试打包"
+     */
 }
 
 extension ViewController: UITableViewDataSource {
