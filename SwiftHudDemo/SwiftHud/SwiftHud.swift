@@ -9,10 +9,11 @@
 import UIKit
 
 
-/// 运行回调
-public typealias RunClosure = () -> ()
+/// 自动完成后的回调
+public typealias CompleteHandle = () -> Void
 
 // MARK:- Hud
+
 /// 对外的Hud类
 public class Hud {
     
@@ -52,12 +53,12 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showMessage(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    public static func showMessage(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showMessage(message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, runable: runable)
+        return HudInternal.showMessage(message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, completeHandle: completeHandle)
     }
     
     /// 显示等待
@@ -67,12 +68,12 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showWait(message: String? = nil, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    public static func showWait(message: String? = nil, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showWait(message:message, autoClear:autoClear, autoClearTime:autoClearTime, responseTap:responseTap, runable:runable)
+        return HudInternal.showWait(message:message, autoClear:autoClear, autoClearTime:autoClearTime, responseTap:responseTap, completeHandle:completeHandle)
     }
     
     /// 显示成功
@@ -82,12 +83,12 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showSuccess(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    public static func showSuccess(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showNotice(type: .success, message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, runable: runable)
+        return HudInternal.showNotice(type: .success, message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, completeHandle: completeHandle)
     }
     
     /// 显示失败
@@ -97,12 +98,12 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showFail(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    public static func showFail(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showNotice(type: .fail, message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, runable: runable)
+        return HudInternal.showNotice(type: .fail, message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, completeHandle: completeHandle)
     }
     
     /// 显示信息
@@ -112,12 +113,12 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showInfo(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    public static func showInfo(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showNotice(type: .info, message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, runable: runable)
+        return HudInternal.showNotice(type: .info, message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, completeHandle: completeHandle)
     }
     
     /// 显示 可以通过枚举进而进行更多的自定义
@@ -128,12 +129,12 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showNotice(type: HudType = .info, message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    public static func showNotice(type: HudType = .info, message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showNotice(type: type, message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, runable: runable)
+        return HudInternal.showNotice(type: type, message: message, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, completeHandle: completeHandle)
     }
     
     /// 显示Gif
@@ -143,15 +144,15 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     ///   - timeMilliseconds: 动画时长,越短动画的节奏越快
     ///   - scale: 图片与mainView的比例,我这里用的黄金比例
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showAnimate(images: [UIImage], autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, timeMilliseconds: Int = 70, scale: CGFloat = 0.618, runable: RunClosure? = nil) -> UIWindow? {
+    public static func showAnimate(images: [UIImage], autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, timeMilliseconds: Int = 70, scale: CGFloat = 0.618, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showAnimate(images: images, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, timeMilliseconds: timeMilliseconds, scale: scale, runable: runable)
+        return HudInternal.showAnimate(images: images, autoClear: autoClear, autoClearTime: autoClearTime, responseTap: responseTap, timeMilliseconds: timeMilliseconds, scale: scale, completeHandle: completeHandle)
     }
     
     /// 通知栏的单行文字信息 注意没有做多行处理 如果多了会进入linebreak模式,另外横屏模式下暂时有问题
@@ -163,12 +164,12 @@ public class Hud {
     ///   - textColor: 颜色
     ///   - fontSize: 字体大小
     ///   - backgroundColor: 背景颜色
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , runable: RunClosure? = nil) -> UIWindow? {
+    public static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showOnNavigationBar(message: message, autoClear: autoClear, autoClearTime: autoClearTime, textColor: textColor, fontSize: fontSize, backgroundColor: backgroundColor, runable: runable)
+        return HudInternal.showOnNavigationBar(message: message, autoClear: autoClear, autoClearTime: autoClearTime, textColor: textColor, fontSize: fontSize, backgroundColor: backgroundColor, completeHandle: completeHandle)
     }
     
     /// 清除Hud
@@ -265,13 +266,13 @@ extension HudType {
 }
 
 /// 标记是否是导航栏的通知样式
-let kNaviBarHud = 10001
+private let kNaviBarHud = 10001
 
 /// 点击Hud的消失的触发次数
-let kHideHudTaps = 2
+private let kHideHudTaps = 2
 
 /// 倒角的数值
-let kCornerRadius: CGFloat = 12
+private let kCornerRadius: CGFloat = 8
 
 // MARK:-  Hud对内API
 /// Hud对内API
@@ -311,10 +312,10 @@ private class HudInternal: NSObject {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    static func showMessage(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    static func showMessage(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         
         guard let rv = rootView else { return nil }
         
@@ -364,7 +365,7 @@ private class HudInternal: NSObject {
             
             //  延时操作
             DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
-                runable?()
+                completeHandle?()
             }
         }
         
@@ -379,10 +380,10 @@ private class HudInternal: NSObject {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    static func showNotice(type: HudType = .info, message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    static func showNotice(type: HudType = .info, message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         
         guard let rv = rootView else { return nil }
         
@@ -457,7 +458,7 @@ private class HudInternal: NSObject {
             perform(selector, with: window, afterDelay: autoClearTime)
             //  延时操作
             DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
-                runable?()
+                completeHandle?()
             }
         }
         return window
@@ -470,10 +471,10 @@ private class HudInternal: NSObject {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    static func showWait(message: String? = nil, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, runable: RunClosure? = nil) -> UIWindow? {
+    static func showWait(message: String? = nil, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         
         guard let rv = rootView else { return nil }
         
@@ -559,7 +560,7 @@ private class HudInternal: NSObject {
             perform(selector, with: window, afterDelay: autoClearTime)
             //  延时操作
             DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
-                runable?()
+                completeHandle?()
             }
         }
         return window
@@ -572,13 +573,13 @@ private class HudInternal: NSObject {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     ///   - timeMilliseconds: 动画时长,越短动画的节奏越快
     ///   - scale: 图片与mainView的比例,我这里用的黄金比例
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    static func showAnimate(images: [UIImage], autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, timeMilliseconds: Int = 70, scale: CGFloat = 0.618, runable: RunClosure? = nil) -> UIWindow? {
+    static func showAnimate(images: [UIImage], autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, timeMilliseconds: Int = 70, scale: CGFloat = 0.618, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let rv = rootView, images.count > 0 else { return nil }
         let frame = CGRect(x: 0, y: 0, width: 90, height: 90)
         let window = UIWindow()
@@ -637,7 +638,7 @@ private class HudInternal: NSObject {
             //  延时操作
             DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
                 self.clear()
-                runable?()
+                completeHandle?()
             }
         }
         
@@ -653,10 +654,10 @@ private class HudInternal: NSObject {
     ///   - textColor: 颜色
     ///   - fontSize: 字体大小
     ///   - backgroundColor: 背景颜色
-    ///   - runable: 非自动移除后的操作响应
+    ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , runable: RunClosure? = nil) -> UIWindow? {
+    static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , completeHandle: CompleteHandle? = nil) -> UIWindow? {
         
         guard UIDevice.current.orientation == .portrait else { return nil }
         
@@ -707,7 +708,7 @@ private class HudInternal: NSObject {
                             self.perform(selector, with: window, afterDelay: TimeInterval(autoClearTime))
                         })
                     }
-                    runable?()
+                    completeHandle?()
                 })
             }
         })
