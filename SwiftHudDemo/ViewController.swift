@@ -80,7 +80,7 @@ extension ViewController: UITableViewDelegate {
                 print("showFail", indexPath)
             }
         case 5:
-            Hud.setDeault().showInfo(message: "信息信息信息信息信息信息信息信息信息") {
+            Hud.setDeault().showInfo(message: "信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息") {
                 print("showInfo", indexPath)
             }
         case 6:

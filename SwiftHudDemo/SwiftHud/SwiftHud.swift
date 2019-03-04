@@ -319,18 +319,13 @@ private class HudInternal: NSObject {
         
         guard let rv = rootView else { return nil }
         
-        let window = UIWindow()
-        window.backgroundColor = backgroundColor
-        window.rootViewController = UIApplication.topViewController()
+        let window = alertWindow()
+        windows.append(window)
+        
         let mainView = UIView()
         mainView.layer.cornerRadius = kCornerRadius
         mainView.backgroundColor = mainColor
-        
-        if responseTap {
-            let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(tapHide(_:)))
-            tapGesture.numberOfTapsRequired = kHideHudTaps
-            window.addGestureRecognizer(tapGesture)
-        }
+        window.addSubview(mainView)
         
         let label = UILabel()
         label.text = message
@@ -340,34 +335,17 @@ private class HudInternal: NSObject {
         label.textColor = textColor
         let size = label.sizeThatFits(CGSize(width: UIScreen.main.bounds.width - 82, height: CGFloat.greatestFiniteMagnitude))
         label.bounds = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        
         mainView.addSubview(label)
         
-        let superFrame = CGRect(x: 0, y: 0, width: label.frame.width + 50 , height: label.frame.height + 30)
-        window.frame = rv.bounds
-        mainView.frame = superFrame
+        let frame = CGRect(x: 0, y: 0, width: label.frame.width + 50 , height: label.frame.height + 30)
+        mainView.frame = frame
         label.center = mainView.center
         mainView.center = rv.center
         
-        #if swift(>=4.2)
-        window.windowLevel = UIWindow.Level.alert
-        #else
-        window.windowLevel = UIWindowLevelAlert
-        #endif
+        alphaEaseIn(mainView)
         
-        window.isHidden = false
-        window.addSubview(mainView)
-        windows.append(window)
-        
-        if autoClear {
-            let selector = #selector(hideHud(_:))
-            perform(selector, with: window, afterDelay: autoClearTime)
-            
-            //  延时操作
-            DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
-                completeHandle?()
-            }
-        }
+        addTapGesture(responseTap: responseTap, window: window)
+        autoClearAction(autoClear: autoClear, window: window, autoClearTime: autoClearTime, completeHandle: completeHandle)
         
         return window
     }
@@ -387,20 +365,14 @@ private class HudInternal: NSObject {
         
         guard let rv = rootView else { return nil }
         
+        let window = alertWindow()
+        windows.append(window)
+        
         var frame = CGRect(x: 0, y: 0, width: 90, height: 90)
-        let window = UIWindow()
-        window.backgroundColor = backgroundColor
-        window.rootViewController = UIApplication.topViewController()
         let mainView = UIView()
         mainView.layer.cornerRadius = kCornerRadius
         mainView.backgroundColor = mainColor
-        
-        if responseTap {
-            let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(tapHide(_:)))
-            tapGesture.numberOfTapsRequired = kHideHudTaps
-            window.addGestureRecognizer(tapGesture)
-        }
-        
+        window.addSubview(mainView)
         
         let image = type.getImage()
         let checkmarkView = UIImageView(image: image)
@@ -433,34 +405,14 @@ private class HudInternal: NSObject {
         }
         
         mainView.addSubview(label)
-        
-        window.frame = rv.bounds
         mainView.frame = frame
         mainView.center = rv.center
         
-        #if swift(>=4.2)
-        window.windowLevel = UIWindow.Level.alert
-        #else
-        window.windowLevel = UIWindowLevelAlert
-        #endif
-        window.center = rv.center
-        window.isHidden = false
-        window.addSubview(mainView)
-        windows.append(window)
+        alphaEaseIn(mainView)
         
-        mainView.alpha = 0.0
-        UIView.animate(withDuration: 0.2, animations: {
-            mainView.alpha = 1
-        })
+        addTapGesture(responseTap: responseTap, window: window)
+        autoClearAction(autoClear: autoClear, window: window, autoClearTime: autoClearTime, completeHandle: completeHandle)
         
-        if autoClear {
-            let selector = #selector(hideHud(_:))
-            perform(selector, with: window, afterDelay: autoClearTime)
-            //  延时操作
-            DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
-                completeHandle?()
-            }
-        }
         return window
     }
     
@@ -478,20 +430,14 @@ private class HudInternal: NSObject {
         
         guard let rv = rootView else { return nil }
         
+        let window = alertWindow()
+        windows.append(window)
+        
         var frame = CGRect(x: 0, y: 0, width: 90, height: 90)
-        let window = UIWindow()
-        window.backgroundColor = backgroundColor
-        window.rootViewController = UIViewController()
         let mainView = UIView()
         mainView.layer.cornerRadius = kCornerRadius
         mainView.backgroundColor = mainColor
-        
-        if responseTap {
-            let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(tapHide(_:)))
-            tapGesture.numberOfTapsRequired = kHideHudTaps
-            window.addGestureRecognizer(tapGesture)
-        }
-        
+        window.addSubview(mainView)
         
         #if swift(>=4.2)
         let ai = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.whiteLarge)
@@ -499,6 +445,7 @@ private class HudInternal: NSObject {
         let ai = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.whiteLarge)
         #endif
         ai.color = indicatorColor
+        
         if let msg = message {
             ai.frame = CGRect(x: 27, y: 15, width: 36, height: 36)
             
@@ -534,35 +481,14 @@ private class HudInternal: NSObject {
         
         ai.startAnimating()
         mainView.addSubview(ai)
-        
-        window.frame = rv.bounds
         mainView.frame = frame
         mainView.center = rv.center
         
-        #if swift(>=4.2)
-        window.windowLevel = UIWindow.Level.alert
-        #else
-        window.windowLevel = UIWindowLevelAlert
-        #endif
+        alphaEaseIn(mainView)
         
-        window.center = rv.center
-        window.isHidden = false
-        window.addSubview(mainView)
-        windows.append(window)
+        addTapGesture(responseTap: responseTap, window: window)
+        autoClearAction(autoClear: autoClear, window: window, autoClearTime: autoClearTime, completeHandle: completeHandle)
         
-        mainView.alpha = 0.0
-        UIView.animate(withDuration: 0.2, animations: {
-            mainView.alpha = 1
-        })
-        
-        if autoClear {
-            let selector = #selector(hideHud(_:))
-            perform(selector, with: window, afterDelay: autoClearTime)
-            //  延时操作
-            DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
-                completeHandle?()
-            }
-        }
         return window
     }
     
@@ -581,19 +507,15 @@ private class HudInternal: NSObject {
     @discardableResult
     static func showAnimate(images: [UIImage], autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, timeMilliseconds: Int = 70, scale: CGFloat = 0.618, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let rv = rootView, images.count > 0 else { return nil }
+        
+        let window = alertWindow()
+        windows.append(window)
+        
         let frame = CGRect(x: 0, y: 0, width: 90, height: 90)
-        let window = UIWindow()
-        window.backgroundColor = backgroundColor
-        window.rootViewController = UIViewController()
         let mainView = UIView()
         mainView.layer.cornerRadius = kCornerRadius
         mainView.backgroundColor = mainColor
-        
-        if responseTap {
-            let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(tapHide(_:)))
-            tapGesture.numberOfTapsRequired = kHideHudTaps
-            window.addGestureRecognizer(tapGesture)
-        }
+        window.addSubview(mainView)
         
         let imgViewFrame = CGRect(x: frame.size.width * (1 - scale) * 0.5, y: frame.size.height * (1 - scale) * 0.5, width: frame.size.width * scale, height: frame.size.height * scale)
         
@@ -604,43 +526,21 @@ private class HudInternal: NSObject {
             mainView.addSubview(imageView)
             timer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: DispatchQueue.main) as? DispatchSource
             timer.schedule(deadline: .now(), repeating: DispatchTimeInterval.milliseconds(timeMilliseconds))
-            timer.setEventHandler(handler: {
+            timer.setEventHandler {
                 let image = images[timerTimes % images.count]
                 imageView.image = image
                 timerTimes += 1
-            })
+            }
             timer.resume()
         }
         
-        window.frame = rv.bounds
         mainView.frame = frame
         mainView.center = rv.center
         
-        #if swift(>=4.2)
-        window.windowLevel = UIWindow.Level.alert
-        #else
-        window.windowLevel = UIWindowLevelAlert
-        #endif
-        window.isHidden = false
-        window.addSubview(mainView)
-        windows.append(window)
+        alphaEaseIn(mainView)
         
-        mainView.alpha = 0.0
-        UIView.animate(withDuration: 0.2, animations: {
-            mainView.alpha = 1
-        })
-        
-        if autoClear {
-            
-            let selector = #selector(hideHud(_:))
-            perform(selector, with: window, afterDelay: autoClearTime)
-            
-            //  延时操作
-            DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
-                self.clear()
-                completeHandle?()
-            }
-        }
+        addTapGesture(responseTap: responseTap, window: window)
+        autoClearAction(autoClear: autoClear, window: window, autoClearTime: autoClearTime, completeHandle: completeHandle)
         
         return window
     }
@@ -664,7 +564,6 @@ private class HudInternal: NSObject {
         let statusBarFrame = UIApplication.shared.statusBarFrame
         let frame = CGRect(x: 0, y: 0, width: statusBarFrame.width, height: (statusBarFrame.height + 44))
         let window = UIWindow()
-        window.rootViewController = UIApplication.topViewController()
         window.backgroundColor = UIColor.clear
         let toolbar = UIToolbar()
         toolbar.barTintColor = backgroundColor
@@ -738,11 +637,53 @@ private class HudInternal: NSObject {
             view.removeFromSuperview()
         }) { (_) in
             
-            if let index = windows.index(where: { (item) -> Bool in
-                return item == window
-            }) {
+            if let index = windows.index(where: { $0 == window }) {
                 windows.remove(at: index)
             }
+        }
+    }
+}
+
+extension HudInternal {
+    static func alertWindow() -> UIWindow {
+        let window = UIWindow()
+        window.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        window.backgroundColor = backgroundColor
+        window.isHidden = false
+        #if swift(>=4.2)
+        window.windowLevel = UIWindow.Level.alert
+        #else
+        window.windowLevel = UIWindowLevelAlert
+        #endif
+        
+        return window
+    }
+    
+    static func autoClearAction(autoClear: Bool, window: UIWindow, autoClearTime: TimeInterval, completeHandle: CompleteHandle? = nil) {
+        if autoClear {
+            
+            let selector = #selector(hideHud(_:))
+            perform(selector, with: window, afterDelay: autoClearTime)
+            
+            //  延时操作
+            DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
+                completeHandle?()
+            }
+        }
+    }
+    
+    static func addTapGesture(responseTap: Bool, window: UIWindow) {
+        if responseTap {
+            let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(tapHide(_:)))
+            tapGesture.numberOfTapsRequired = kHideHudTaps
+            window.addGestureRecognizer(tapGesture)
+        }
+    }
+    
+    static func alphaEaseIn(_ mainView: UIView) {
+        mainView.alpha = 0.0
+        UIView.animate(withDuration: 0.2) {
+            mainView.alpha = 1
         }
     }
 }
@@ -857,27 +798,6 @@ private class HudGraph {
 public extension UIWindow{
     public func hide(){
         HudInternal.hideHud(self)
-    }
-}
-
-// MARK: - 获取顶层控制器
-extension UIApplication {
-    class func topViewController(_ rootVC: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
-        if let nav = rootVC as? UINavigationController {
-            return topViewController(nav.visibleViewController)
-        }
-        
-        if let tab = rootVC as? UITabBarController {
-            if let selected = tab.selectedViewController {
-                return topViewController(selected)
-            }
-        }
-        
-        if let presented = rootVC?.presentedViewController {
-            return topViewController(presented)
-        }
-        
-        return rootVC
     }
 }
 
