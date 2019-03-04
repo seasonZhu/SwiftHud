@@ -559,12 +559,16 @@ private class HudInternal: NSObject {
     @discardableResult
     static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , completeHandle: CompleteHandle? = nil) -> UIWindow? {
         
-        guard UIDevice.current.orientation == .portrait else { return nil }
+        //guard UIDevice.current.orientation == .portrait else { return nil }
         
-        let statusBarFrame = UIApplication.shared.statusBarFrame
+        let statusBarFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIApplication.shared.statusBarFrame.height == 0 ? 20 : UIApplication.shared.statusBarFrame.height)
         let frame = CGRect(x: 0, y: 0, width: statusBarFrame.width, height: (statusBarFrame.height + 44))
-        let window = UIWindow()
+        
+        let window = alertWindow()
         window.backgroundColor = UIColor.clear
+        window.frame = frame
+        windows.append(window)
+        
         let toolbar = UIToolbar()
         toolbar.barTintColor = backgroundColor
         let label = UILabel(frame: CGRect(x: 0, y: statusBarFrame.height, width: frame.width, height: (frame.height - 44)))
@@ -574,18 +578,8 @@ private class HudInternal: NSObject {
         label.text = message
         label.lineBreakMode = .byTruncatingMiddle
         toolbar.addSubview(label)
-        
-        window.frame = frame
         toolbar.frame = frame
-
-        #if swift(>=4.2)
-        window.windowLevel = UIWindow.Level.statusBar
-        #else
-        window.windowLevel = UIWindowLevelStatusBar
-        #endif
-        window.isHidden = false
         window.addSubview(toolbar)
-        windows.append(window)
         
         var origPoint = toolbar.frame.origin
         origPoint.y = -(toolbar.frame.size.height)
@@ -600,7 +594,6 @@ private class HudInternal: NSObject {
                 DispatchQueue.global().asyncAfter(deadline: .now() + autoClearTime, execute: {
                     DispatchQueue.main.async {
                         UIView.animate(withDuration: 0.3, animations: {
-                            /// Vanishing animation
                             toolbar.frame = CGRect(origin: origPoint, size: toolbar.frame.size)
                         }, completion: { (_) in
                             let selector = #selector(hideHud(_:))
