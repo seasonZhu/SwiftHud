@@ -28,7 +28,7 @@ public class Hud {
     }
     
     /// 非showOnNavigationBar的mainView的背景颜色
-    public static var mainColor: UIColor = .hudBg {
+    public static var mainColor: UIColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.8) {
         didSet {
             HudInternal.mainColor = mainColor
         }
@@ -56,7 +56,7 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     public static func showMessage(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -71,7 +71,7 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     public static func showWait(message: String? = nil, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -86,7 +86,7 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     public static func showSuccess(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -101,7 +101,7 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     public static func showFail(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -116,7 +116,7 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     public static func showInfo(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -132,7 +132,7 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     public static func showNotice(type: HudType = .info, message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -147,10 +147,10 @@ public class Hud {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     ///   - timeMilliseconds: 动画时长,越短动画的节奏越快
     ///   - scale: 图片与mainView的比例,我这里用的黄金比例
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     public static func showAnimate(images: [UIImage], autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, timeMilliseconds: Int = 70, scale: CGFloat = 0.618, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -167,7 +167,7 @@ public class Hud {
     ///   - textColor: 颜色
     ///   - fontSize: 字体大小
     ///   - backgroundColor: 背景颜色
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     public static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , toolbarTapHandle: ToolbarTapHandle? = nil, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -233,7 +233,7 @@ extension Hud {
     @discardableResult
     public static func setDeault() -> Hud.Type {
         backgroundColor = .clear
-        mainColor = .hudBg
+        mainColor = UIColor(red:0, green:0, blue:0, alpha: 0.8)
         textColor = .white
         indicatorColor = .white
         return type(of: Hud())
@@ -291,24 +291,13 @@ private class HudInternal: NSObject {
     
     static var backgroundColor = UIColor.clear
     
-    static var mainColor: UIColor = UIColor.hudBg
+    static var mainColor = UIColor(red:0, green:0, blue:0, alpha: 0.8)
     
-    static var textColor: UIColor = UIColor.white
+    static var textColor = UIColor.white
     
-    static var indicatorColor: UIColor = .white
+    static var indicatorColor = UIColor.white
     
-    static var toolbarTapHandle: (() -> Void)?
-    
-    /// 清除Hud
-    static func clear() {
-        cancelPreviousPerformRequests(withTarget: self)
-        if let _ = timer {
-            timer.cancel()
-            timer = nil
-            timerTimes = 0
-        }
-        taskQueues.removeAll(keepingCapacity: false)
-    }
+    static var toolbarTapHandle: ToolbarTapHandle?
     
     /// 仅显示文字
     ///
@@ -317,7 +306,7 @@ private class HudInternal: NSObject {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     static func showMessage(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -339,7 +328,7 @@ private class HudInternal: NSObject {
         label.textAlignment = .center
         label.textColor = textColor
         let size = label.sizeThatFits(CGSize(width: UIScreen.main.bounds.width - 82, height: CGFloat.greatestFiniteMagnitude))
-        label.bounds = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        label.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         mainView.addSubview(label)
         
         let frame = CGRect(x: 0, y: 0, width: label.frame.width + 50 , height: label.frame.height + 30)
@@ -363,7 +352,7 @@ private class HudInternal: NSObject {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     static func showNotice(type: HudType = .info, message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -406,7 +395,6 @@ private class HudInternal: NSObject {
             frame.size.width = size.width + 10
             frame.size.height = size.height + label.frame.minY + 5
             checkmarkView.frame.origin.x = (frame.width - checkmarkView.frame.width) / 2
-            
         }
         
         mainView.addSubview(label)
@@ -428,7 +416,7 @@ private class HudInternal: NSObject {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     static func showWait(message: String? = nil, autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -504,10 +492,10 @@ private class HudInternal: NSObject {
     ///   - autoClear: 是否自动移除
     ///   - autoClearTime: 移除的延迟时间
     ///   - responseTap: 是否响应点击移除
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     ///   - timeMilliseconds: 动画时长,越短动画的节奏越快
     ///   - scale: 图片与mainView的比例,我这里用的黄金比例
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     static func showAnimate(images: [UIImage], autoClear: Bool = true, autoClearTime: TimeInterval = 3, responseTap: Bool = false, timeMilliseconds: Int = 70, scale: CGFloat = 0.618, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -550,7 +538,7 @@ private class HudInternal: NSObject {
         return window
     }
     
-    /// 通知栏的单行文字信息 注意没有做多行处理 如果多了会进入linebreak模式,另外横屏模式下暂时有问题
+    /// 通知栏的文字信息
     ///
     /// - Parameters:
     ///   - message: 信息
@@ -559,7 +547,7 @@ private class HudInternal: NSObject {
     ///   - textColor: 颜色
     ///   - fontSize: 字体大小
     ///   - backgroundColor: 背景颜色
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
     static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil, toolbarTapHandle: ToolbarTapHandle? = nil, completeHandle: CompleteHandle? = nil) -> UIWindow? {
@@ -616,6 +604,17 @@ private class HudInternal: NSObject {
             }
         })
         return window
+    }
+    
+    /// 清除Hud
+    static func clear() {
+        cancelPreviousPerformRequests(withTarget: self)
+        if let _ = timer {
+            timer.cancel()
+            timer = nil
+            timerTimes = 0
+        }
+        taskQueues.removeAll(keepingCapacity: false)
     }
     
     /// 点击手势隐藏
@@ -695,7 +694,7 @@ extension HudInternal {
     ///   - autoClear: 是否自动移除
     ///   - window: alertWindow
     ///   - autoClearTime: 移除的延迟时间
-    ///   - completeHandle: 非自动移除后的操作响应
+    ///   - completeHandle: 自动移除后的操作响应
     static func autoClearAction(autoClear: Bool, window: UIWindow, autoClearTime: TimeInterval, completeHandle: CompleteHandle? = nil) {
         if autoClear {
             let selector = #selector(hideHud(_:))
@@ -842,12 +841,5 @@ private class HudGraph {
 public extension UIWindow{
     public func hide() {
         HudInternal.hideHud(self)
-    }
-}
-
-// MARK: - Hud的背景颜色
-extension UIColor {
-    static var hudBg: UIColor  {
-        return UIColor(red:0, green:0, blue:0, alpha: 0.8)
     }
 }
