@@ -68,7 +68,7 @@ extension ViewController: UITableViewDelegate {
                 .setMainColor(UIColor.gray)
                 .setTextColor(UIColor.yellow)
                 .setIndicatorColor(UIColor.green)
-                .showWait(message: "测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试", autoClear: true, autoClearTime: 3, responseTap: true) {
+                .showWait(message: "测试测试测试测试测试测试测试\n测试测试测试测试测试测试测试测试\n测试测试测试测试测试测试测试测试测试测试测试", autoClear: true, autoClearTime: 3, responseTap: true) {
                 print("showWait Message", indexPath)
             }
         case 3:
@@ -80,7 +80,7 @@ extension ViewController: UITableViewDelegate {
                 print("showFail", indexPath)
             }
         case 5:
-            Hud.setDeault().showInfo(message: "信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息信息") {
+            Hud.setDeault().showInfo(message: "信息信息信息信息信息信息\n信息信息信息信息信息信息信息信息\n信息信息信息信息信息信息信息信息\n信息信息信息信息信息信息信息信息信息信息信息信息信息信息") {
                 print("showInfo", indexPath)
             }
         case 6:
@@ -114,7 +114,9 @@ extension ViewController: UITableViewDelegate {
             }
             */
         case 7:
-            Hud.showOnNavigationBar(message: "这个一条通知栏信息😁", autoClear: true, autoClearTime: 3) {
+            Hud.showOnNavigationBar(message: "这个一条通知栏信息😁", autoClear: true, autoClearTime: 3, toolBarTapHandle: {
+                print("点击了toolBar")
+            }) {
                 print("showOnNavigationBar", indexPath)
             }
         default:

@@ -12,6 +12,9 @@ import UIKit
 /// 自动完成后的回调
 public typealias CompleteHandle = () -> Void
 
+/// 点击通知栏的ToolBar回调
+public typealias ToolBarTapHandle = CompleteHandle
+
 // MARK:- Hud
 
 /// 对外的Hud类
@@ -167,9 +170,9 @@ public class Hud {
     ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    public static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , completeHandle: CompleteHandle? = nil) -> UIWindow? {
+    public static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , toolBarTapHandle: ToolBarTapHandle? = nil, completeHandle: CompleteHandle? = nil) -> UIWindow? {
         guard let _ = UIApplication.shared.keyWindow else { return nil }
-        return HudInternal.showOnNavigationBar(message: message, autoClear: autoClear, autoClearTime: autoClearTime, textColor: textColor, fontSize: fontSize, backgroundColor: backgroundColor, completeHandle: completeHandle)
+        return HudInternal.showOnNavigationBar(message: message, autoClear: autoClear, autoClearTime: autoClearTime, textColor: textColor, fontSize: fontSize, backgroundColor: backgroundColor, toolBarTapHandle: toolBarTapHandle, completeHandle: completeHandle)
     }
     
     /// 清除Hud
@@ -278,7 +281,7 @@ private let kCornerRadius: CGFloat = 8
 /// Hud对内API
 private class HudInternal: NSObject {
     //MARK:- 属性设置
-    static var windows = [UIWindow?]()
+    static var taskQueues = [UIWindow]()
     
     static let rootView = UIApplication.shared.keyWindow?.subviews.first
     
@@ -294,6 +297,8 @@ private class HudInternal: NSObject {
     
     static var indicatorColor: UIColor = .white
     
+    static var toolBarTapHandle: (() -> Void)?
+    
     /// 清除Hud
     static func clear() {
         cancelPreviousPerformRequests(withTarget: self)
@@ -302,7 +307,7 @@ private class HudInternal: NSObject {
             timer = nil
             timerTimes = 0
         }
-        windows.removeAll(keepingCapacity: false)
+        taskQueues.removeAll(keepingCapacity: false)
     }
     
     /// 仅显示文字
@@ -320,7 +325,7 @@ private class HudInternal: NSObject {
         guard let rv = rootView else { return nil }
         
         let window = alertWindow()
-        windows.append(window)
+        taskQueues.append(window)
         
         let mainView = UIView()
         mainView.layer.cornerRadius = kCornerRadius
@@ -366,7 +371,7 @@ private class HudInternal: NSObject {
         guard let rv = rootView else { return nil }
         
         let window = alertWindow()
-        windows.append(window)
+        taskQueues.append(window)
         
         var frame = CGRect(x: 0, y: 0, width: 90, height: 90)
         let mainView = UIView()
@@ -431,7 +436,7 @@ private class HudInternal: NSObject {
         guard let rv = rootView else { return nil }
         
         let window = alertWindow()
-        windows.append(window)
+        taskQueues.append(window)
         
         var frame = CGRect(x: 0, y: 0, width: 90, height: 90)
         let mainView = UIView()
@@ -509,7 +514,7 @@ private class HudInternal: NSObject {
         guard let rv = rootView, images.count > 0 else { return nil }
         
         let window = alertWindow()
-        windows.append(window)
+        taskQueues.append(window)
         
         let frame = CGRect(x: 0, y: 0, width: 90, height: 90)
         let mainView = UIView()
@@ -557,20 +562,22 @@ private class HudInternal: NSObject {
     ///   - completeHandle: 非自动移除后的操作响应
     /// - Returns: 返回window
     @discardableResult
-    static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil , completeHandle: CompleteHandle? = nil) -> UIWindow? {
-        
-        //guard UIDevice.current.orientation == .portrait else { return nil }
-        
+    static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil, toolBarTapHandle: ToolBarTapHandle? = nil, completeHandle: CompleteHandle? = nil) -> UIWindow? {
+    
         let statusBarFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIApplication.shared.statusBarFrame.height == 0 ? 20 : UIApplication.shared.statusBarFrame.height)
         let frame = CGRect(x: 0, y: 0, width: statusBarFrame.width, height: (statusBarFrame.height + 44))
         
         let window = alertWindow()
         window.backgroundColor = UIColor.clear
         window.frame = frame
-        windows.append(window)
+        taskQueues.append(window)
         
         let toolbar = UIToolbar()
         toolbar.barTintColor = backgroundColor
+        toolbar.tag = kNaviBarHud
+        toolbar.frame = frame
+        window.addSubview(toolbar)
+        
         let label = UILabel(frame: CGRect(x: 0, y: statusBarFrame.height, width: frame.width, height: (frame.height - 44)))
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: fontSize)
@@ -578,30 +585,31 @@ private class HudInternal: NSObject {
         label.text = message
         label.lineBreakMode = .byTruncatingMiddle
         toolbar.addSubview(label)
-        toolbar.frame = frame
-        window.addSubview(toolbar)
+        
+        if let toolBarTapHandle = toolBarTapHandle {
+            self.toolBarTapHandle = toolBarTapHandle
+            let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(toolBarTap(_:)))
+            toolbar.addGestureRecognizer(tapGesture)
+        }
         
         var origPoint = toolbar.frame.origin
         origPoint.y = -(toolbar.frame.size.height)
         let destPoint = toolbar.frame.origin
-        toolbar.tag = kNaviBarHud
         
         toolbar.frame = CGRect(origin: origPoint, size: toolbar.frame.size)
         UIView.animate(withDuration: 0.3, animations: {
             toolbar.frame = CGRect(origin: destPoint, size: toolbar.frame.size)
         }, completion: { _ in
             if autoClear {
-                DispatchQueue.global().asyncAfter(deadline: .now() + autoClearTime, execute: {
-                    DispatchQueue.main.async {
-                        UIView.animate(withDuration: 0.3, animations: {
-                            toolbar.frame = CGRect(origin: origPoint, size: toolbar.frame.size)
-                        }, completion: { (_) in
-                            let selector = #selector(hideHud(_:))
-                            self.perform(selector, with: window, afterDelay: TimeInterval(autoClearTime))
-                        })
-                    }
+                DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
+                    UIView.animate(withDuration: 0.3, animations: {
+                        toolbar.frame = CGRect(origin: origPoint, size: toolbar.frame.size)
+                    }, completion: { (_) in
+                        let selector = #selector(hideHud(_:))
+                        self.perform(selector, with: window, afterDelay: 0)
+                    })
                     completeHandle?()
-                })
+                }
             }
         })
         return window
@@ -615,6 +623,14 @@ private class HudInternal: NSObject {
         clear()
     }
     
+    /// 点击通知栏的工具条
+    ///
+    /// - Parameter gesture: 手势
+    @objc
+    static func toolBarTap(_ gesture: UITapGestureRecognizer) {
+        toolBarTapHandle?()
+    }
+    
     /// 隐藏Hud
     ///
     /// - Parameter sender: 传递值
@@ -623,21 +639,28 @@ private class HudInternal: NSObject {
         guard let window = sender as? UIWindow, let view = window.subviews.first else { return }
         
         UIView.animate(withDuration: 0.2, animations: {
+            // 这一段if主要用于手动进行HUD移除用的
             if view.tag == kNaviBarHud {
                 view.frame = CGRect(x: 0, y: -view.frame.height, width: view.frame.width, height: view.frame.height)
             }
             view.alpha = 0
             view.removeFromSuperview()
+            window.alpha = 0
+            window.removeFromSuperview()
         }) { (_) in
-            
-            if let index = windows.index(where: { $0 == window }) {
-                windows.remove(at: index)
+            // 从任务队列中移除
+            if let index = taskQueues.index(where: { $0 == window }) {
+                taskQueues.remove(at: index)
             }
         }
     }
 }
 
 extension HudInternal {
+    
+    /// 创建alertWindow
+    ///
+    /// - Returns: UIWindow
     static func alertWindow() -> UIWindow {
         let window = UIWindow()
         window.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -652,19 +675,29 @@ extension HudInternal {
         return window
     }
     
+    /// 自动移除的行为
+    ///
+    /// - Parameters:
+    ///   - autoClear: 是否自动移除
+    ///   - window: alertWindow
+    ///   - autoClearTime: 移除的延迟时间
+    ///   - completeHandle: 非自动移除后的操作响应
     static func autoClearAction(autoClear: Bool, window: UIWindow, autoClearTime: TimeInterval, completeHandle: CompleteHandle? = nil) {
         if autoClear {
-            
             let selector = #selector(hideHud(_:))
             perform(selector, with: window, afterDelay: autoClearTime)
             
-            //  延时操作
             DispatchQueue.main.asyncAfter(deadline: .now() + autoClearTime) {
                 completeHandle?()
             }
         }
     }
     
+    /// 添加响应手势
+    ///
+    /// - Parameters:
+    ///   - responseTap: 是否响应点击移除
+    ///   - window: alertWindow
     static func addTapGesture(responseTap: Bool, window: UIWindow) {
         if responseTap {
             let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(tapHide(_:)))
@@ -673,6 +706,9 @@ extension HudInternal {
         }
     }
     
+    /// view的透明度的渐入
+    ///
+    /// - Parameter mainView: UIView
     static func alphaEaseIn(_ mainView: UIView) {
         mainView.alpha = 0.0
         UIView.animate(withDuration: 0.2) {
@@ -692,6 +728,7 @@ private class HudGraph {
         static var imageOfInfo: UIImage?
     }
     
+    /// 绘制的颜色
     static var drawColor: UIColor = .white
     
     /// 绘制图片
@@ -789,14 +826,14 @@ private class HudGraph {
 
 // MARK: - UIWindow的隐藏分类
 public extension UIWindow{
-    public func hide(){
+    public func hide() {
         HudInternal.hideHud(self)
     }
 }
 
 // MARK: - Hud的背景颜色
 extension UIColor {
-    class var hudBg: UIColor  {
+    static var hudBg: UIColor  {
         return UIColor(red:0, green:0, blue:0, alpha: 0.8)
     }
 }
