@@ -565,26 +565,30 @@ private class HudInternal: NSObject {
     static func showOnNavigationBar(message: String, autoClear: Bool = true, autoClearTime: TimeInterval = 3, textColor: UIColor = .black, fontSize: CGFloat = 13, backgroundColor: UIColor? = nil, toolbarTapHandle: ToolbarTapHandle? = nil, completeHandle: CompleteHandle? = nil) -> UIWindow? {
     
         let statusBarFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIApplication.shared.statusBarFrame.height == 0 ? 20 : UIApplication.shared.statusBarFrame.height)
-        let frame = CGRect(x: 0, y: 0, width: statusBarFrame.width, height: (statusBarFrame.height + 44))
         
         let window = alertWindow()
         window.backgroundColor = UIColor.clear
-        window.frame = frame
         taskQueues.append(window)
         
         let toolbar = UIToolbar()
         toolbar.barTintColor = backgroundColor
         toolbar.tag = kNaviBarHud
-        toolbar.frame = frame
         window.addSubview(toolbar)
         
-        let label = UILabel(frame: CGRect(x: 0, y: statusBarFrame.height, width: frame.width, height: (frame.height - 44)))
+        let labelWidth = statusBarFrame.width - 20
+        let label = UILabel()
         label.textAlignment = .center
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textColor = textColor
         label.text = message
-        label.lineBreakMode = .byTruncatingMiddle
+        label.numberOfLines = 0
+        let size = label.sizeThatFits(CGSize(width: labelWidth, height: CGFloat.greatestFiniteMagnitude))
+        label.frame = CGRect(x: 10, y: statusBarFrame.height, width: labelWidth, height: size.height)
         toolbar.addSubview(label)
+        
+        let frame = CGRect(x: 0, y: 0, width: statusBarFrame.width, height: statusBarFrame.height + size.height + 20)
+        window.frame = frame
+        toolbar.frame = frame
         
         if let toolbarTapHandle = toolbarTapHandle {
             self.toolbarTapHandle = toolbarTapHandle
@@ -592,10 +596,10 @@ private class HudInternal: NSObject {
             toolbar.addGestureRecognizer(tapGesture)
         }
         
-        var origPoint = toolbar.frame.origin
-        origPoint.y = -(toolbar.frame.size.height)
+        var originPoint = toolbar.frame.origin
+        originPoint.y = -(toolbar.frame.size.height)
         
-        toolbar.frame = CGRect(origin: origPoint, size: toolbar.frame.size)
+        toolbar.frame = CGRect(origin: originPoint, size: toolbar.frame.size)
         UIView.animate(withDuration: 0.3, animations: {
             toolbar.transform = CGAffineTransform(translationX: 0, y: -toolbar.frame.origin.y)
         }, completion: { _ in
@@ -646,6 +650,7 @@ private class HudInternal: NSObject {
                     remove()
                 })
             }else {
+            // 一般情况
                 remove()
             }
 

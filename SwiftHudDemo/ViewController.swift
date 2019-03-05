@@ -114,7 +114,7 @@ extension ViewController: UITableViewDelegate {
             }
             */
         case 7:
-            Hud.showOnNavigationBar(message: "这个一条通知栏信息😁", autoClear: true, autoClearTime: 3, toolbarTapHandle: {
+            Hud.showOnNavigationBar(message: "这个一条通知栏信息😁这个一条通知栏信息😁这个一条通知栏信息😁这个一条通知栏信息😁这个一条通知栏信息😁这个一条通知栏信息😁这个一条通知栏信息😁这个一条通知栏信息😁", autoClear: true, autoClearTime: 3, toolbarTapHandle: {
                 print("点击了toolBar")
             }) {
                 print("showOnNavigationBar", indexPath)
